@@ -1,12 +1,25 @@
-# React + Vite
+# 🎵 LiteMusic
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A sleek, responsive music search and playback app powered by the Deezer API. Inspired by Spotify’s interface — built with React + Tailwind + Framer Motion.
 
-Currently, two official plugins are available:
+### 🔥 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🎧 Live search with instant results from Deezer
+- 🎨 Custom light/dark theme switcher (with memory)
+- 🎼 Scrollable genre browsing and trending carousels
+- 💿 Audio preview with animated now playing bar
+- ⚡ Responsive design and smooth transitions
 
-## Expanding the ESLint configuration
+### 🛠 Built With
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React + Vite
+- Tailwind CSS (with custom themes)
+- Framer Motion
+- Lucide Icons
+- Deezer API
+
+### 📦 Setup
+
+```bash
+npm install
+npm run dev
