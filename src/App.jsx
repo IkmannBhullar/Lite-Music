@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
@@ -14,6 +14,31 @@ function App() {
   const [currentTrack, setCurrentTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(null);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsDark(true);
+    } else {
+      document.documentElement.classList.remove("dark");
+      setIsDark(false);
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const isCurrentlyDark = document.documentElement.classList.contains("dark");
+    if (isCurrentlyDark) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+      setIsDark(false);
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setIsDark(true);
+    }
+  };
 
   const handleSearch = async (query) => {
     try {
@@ -52,51 +77,58 @@ function App() {
   };
 
   return (
-    <div className="flex">
+    <div className="flex w-full h-screen overflow-hidden">
       <Sidebar />
-      <div className="flex-1 bg-brand-background min-h-screen pb-24 w-full max-w-full">
-        <Header />
-        <GenreBar onGenreSelect={handleSearch} />
-        <TrendingCarousel
-          onClickTrack={(track) => {
-            const index = tracks.findIndex((t) => t.id === track.id);
-            setCurrentTrack(track);
-            setCurrentTrackIndex(index);
-            setIsPlaying(true);
-          }}
-        />
-        <SearchBar onSearch={handleSearch} />
+      <div className="flex-1 flex flex-col w-full bg-brand-background text-brand-text dark:bg-brand-dark-background dark:text-brand-dark-text">
+        <div className="w-full max-w-screen-2xl mx-auto flex flex-col h-full">
+          <Header toggleTheme={toggleTheme} isDark={isDark} />
+          <GenreBar onGenreSelect={handleSearch} />
+          <TrendingCarousel
+            onClickTrack={(track) => {
+              const index = tracks.findIndex((t) => t.id === track.id);
+              setCurrentTrack(track);
+              setCurrentTrackIndex(index);
+              setIsPlaying(true);
+            }}
+          />
+          <SearchBar onSearch={handleSearch} />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 md:px-6">
-          <AnimatePresence>
-            {tracks.map((track, index) => (
-              <motion.div
-                key={track.id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.4, delay: index * 0.05 }}
-              >
-                <MusicCard
-                  title={track.title}
-                  artist={track.artist.name}
-                  image={track.album.cover_medium}
-                  onClick={() => handleTrackClick(track, index)}
-                  isActive={currentTrack?.id === track.id}
-                />
-              </motion.div>
-            ))}
-          </AnimatePresence>
+          {/* Scrollable themed results section */}
+          <div className="flex-1 overflow-y-auto px-4 md:px-6 pb-32">
+            <div className="bg-brand-surface dark:bg-brand-dark-surface p-4 rounded-lg transition-colors">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <AnimatePresence>
+                  {tracks.map((track, index) => (
+                    <motion.div
+                      key={track.id}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.4, delay: index * 0.05 }}
+                    >
+                      <MusicCard
+                        title={track.title}
+                        artist={track.artist.name}
+                        image={track.album.cover_medium}
+                        onClick={() => handleTrackClick(track, index)}
+                        isActive={currentTrack?.id === track.id}
+                      />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
+
+          <NowPlayingBar
+            track={currentTrack}
+            isPlaying={isPlaying}
+            onTogglePlay={() => setIsPlaying(!isPlaying)}
+            onNext={playNext}
+            onPrev={playPrev}
+          />
         </div>
-
-        <NowPlayingBar
-          track={currentTrack}
-          isPlaying={isPlaying}
-          onTogglePlay={() => setIsPlaying(!isPlaying)}
-          onNext={playNext}
-          onPrev={playPrev}
-        />
       </div>
     </div>
   );
